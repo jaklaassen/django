@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
 from .models import (TaggedItem, ValuableTaggedItem, Comparison, Animal,
-    Vegetable, Mineral, Gecko)
+    Vegetable, Mineral, Gecko, Rock, Mammal)
 
 
 class GenericRelationsTests(TestCase):
@@ -196,6 +196,23 @@ class GenericRelationsTests(TestCase):
             content_object=quartz, tag="shiny", value=10
         )
         self.assertEqual(valuedtag.content_object, quartz)
+
+    def test_subclasses_with_gen_rel(self):
+        """Test that concrete model subclasses with generic relations work correctly
+        https://code.djangoproject.com/ticket/11263
+        """
+        granite = Rock.objects.create(name='granite', hardness=5)
+        tag = TaggedItem.objects.create(content_object=granite, tag="countertop")
+        self.assertEqual(Rock.objects.filter(tags__tag="countertop").count(), 1)
+    
+    def test_subclasses_with_parent_gen_rel(self):
+        """Test that generic relations on a concrete model base class work correctly in subclasses
+        https://code.djangoproject.com/ticket/11263
+        """
+
+        bear = Mammal.objects.create(common_name='bear', latin_name='ursa')
+        tag = TaggedItem.objects.create(content_object=bear, tag="cuddly")
+        self.assertEqual(Mammal.objects.filter(tags__tag="cuddly").count(), 1)
 
     def test_generic_inline_formsets(self):
         GenericFormSet = generic_inlineformset_factory(TaggedItem, extra=1)

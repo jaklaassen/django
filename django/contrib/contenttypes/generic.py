@@ -191,6 +191,7 @@ class GenericRelation(RelatedField, Field):
 
         # Save a reference to which model this class is on for future use
         self.model = cls
+        cls._meta.add_virtual_field(self)
 
         # Add the descriptor for the m2m relation
         setattr(cls, self.name, ReverseGenericRelatedObjectsDescriptor(self))

@@ -88,3 +88,9 @@ class GeckoManager(models.Manager):
 class Gecko(models.Model):
     has_tail = models.BooleanField()
     objects = GeckoManager()
+
+class Mammal(Animal):
+    pass
+
+class Rock(Mineral):
+    tags = generic.GenericRelation(TaggedItem)
